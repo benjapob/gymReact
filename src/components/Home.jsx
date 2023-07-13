@@ -1,7 +1,11 @@
+import * as React from 'react';
+
 export function Home() {
+
     return (
         <div class="bg-dark">
                     <div class="container text-center">
+                
                     <div class="row">
                         <div class="header">
                             <h2 class="text-light">Disciplinas</h2>

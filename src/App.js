@@ -1,67 +1,122 @@
 import * as React from "react";
 import {Home} from "./components/Home"
 import {Login} from "./components/Login"
-import {Registro} from "./components/Registro"
 import {Reserva} from "./components/Reserva"
-import {Routes, Route} from "react-router-dom";
+import {Routes, Route, Navigate} from "react-router-dom";
+
+const ProtectedRoute = ({ token, children }) => {
+    if (token.length == 0) {
+      return <Navigate to="/" replace />;
+    }
+  
+    return children;
+};
+
+const Logeado = ({ token, children }) => {
+    if (token.length == 1) {
+      return <Navigate to="/reservarHora" replace />;
+    }
+  
+    return children;
+};
 
 export function App(){
-    
+
+    const obtenerToken = () => {
+        var datos = localStorage.getItem("token");
+        if(datos){
+            return JSON.parse(datos);
+        }else{
+            return [];
+        }
+    }
+
+    const [token, setToken] = React.useState(obtenerToken());
+
+    const handleLogout = () => {
+        setToken([])
+        window.location = '/'
+    };
+
+    React.useEffect(() => {
+        localStorage.setItem("token", JSON.stringify(token));
+    }, [token]);
+
     return (
+        
         <div>
             {/* header */}
-            <nav class="navbar navbar-expand-lg bg-dark">
-                <div class="container-fluid">
-                    <a href="/" type="button" class="btn btn-dark navbar-brand">
-                        <img src={require('./img/logo.png')} alt="Bootstrap" width="110" height="110"/>
-                    </a>
-                    <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                        </li>
-                    </ul>
-                    <form class="d-flex justify-content-between" role="search">
-                        <a href="login" type="button" class="btn btn-dark m-2">
-                        <p>Iniciar sesión</p>
+            <div>
+                <nav class="navbar navbar-expand-lg bg-dark">
+                    <div class="container-fluid">
+                        <a href="/" type="button" class="btn btn-dark navbar-brand">
+                            <img src={require('./img/logo.png')} alt="Bootstrap" width="110" height="110"/>
                         </a>
-                    </form>
+                        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                            </li>
+                        </ul>
+                        <form class="d-flex justify-content-between" role="search">
+                            <a href="login" type="button" class="btn btn-dark m-2">
+                            <p>Iniciar sesión</p>
+                            </a>
+                            {token.length == 1 && (
+                                <a type="button" class="btn btn-dark m-2 text-danger" onClick={handleLogout}>
+                                Cerrar sesión
+                                </a>
+                            )}
+                        </form>
+                        </div>
+                    </div>
+                </nav>
+                <div class="row">
+                    <div class="col p-0">
+                        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src={require('./img/1.jpeg')} class="d-block w-100" alt="..."/>
+                            </div>
+                            <div class="carousel-item">
+                                <img src={require('./img/2.jpeg')} class="d-block w-100" alt="..."/>
+                            </div>
+                            <div class="carousel-item">
+                                <img src={require('./img/3.jpeg')} class="d-block w-100" alt="..."/>
+                            </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </nav>
-            <div class="row">
-            <div class="col p-0">
-                <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src={require('./img/1.jpeg')} class="d-block w-100" alt="..."/>
-                    </div>
-                    <div class="carousel-item">
-                        <img src={require('./img/2.jpeg')} class="d-block w-100" alt="..."/>
-                    </div>
-                    <div class="carousel-item">
-                        <img src={require('./img/3.jpeg')} class="d-block w-100" alt="..."/>
-                    </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
             </div>
             {/*  content */}
             <Routes>
                 <Route path="/" element={<Home/>} />
-                <Route path="login" element={<Login/>} />
-                <Route path="registro" element={<Registro/>} />
-                <Route path="reservarHora" element={<Reserva/>} />
+                <Route path="login" element={
+                        <Logeado token={token}>
+                            {<Login/>}
+                        </Logeado>
+                    } 
+                />            
+                <Route 
+                    path="reservarHora" 
+                    element={
+                        <ProtectedRoute token={token}>
+                            <Reserva/>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="*" element={<h3 className="text-center text-danger">No hay nada aquí: error 404</h3>}/>
             </Routes>
             {/* footer */}
             <div class="row text-center">

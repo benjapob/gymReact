@@ -3,7 +3,6 @@ import {Trash3} from 'react-bootstrap-icons'
 
 export function Reserva() {
 
-
   const obtenerRegistros = () => {
     var datos = localStorage.getItem("registrosls");
     if(datos){
@@ -13,39 +12,36 @@ export function Reserva() {
     }
   }
 
-
   const [registrosls, setRegistrosLS] = useState(obtenerRegistros());
-
-    const [disciplina, setDisciplina]= useState();
-    const [nombre, setNombre] = useState();
-    const [email, setEmail] = useState();
-    const [fecha, setFecha] = useState();
-    const [hora, setHora] = useState();
+  
+  useEffect(() => {
+    localStorage.setItem("registrosls", JSON.stringify(registrosls));
+  }, [registrosls]);
 
 
+
+  const [disciplina, setDisciplina]= useState();
+  const [nombre, setNombre] = useState();
+  const [email, setEmail] = useState();
+  const [fecha, setFecha] = useState();
+  const [hora, setHora] = useState();
 
   const botonGuardar = (e) => {
-    if (disciplina !== '' && nombre !== '' && email !== '' && fecha !== '' && hora !== ''){
+    if (disciplina && nombre && email && fecha && hora){
       e.preventDefault();
       var miObjeto = {disciplina,nombre,email,fecha,hora}
       setRegistrosLS([...registrosls, miObjeto])
+      alert("Cita registrada")
       limpiarFormulario();
     }
   }
 
-
-
-  useEffect(() => {
-      localStorage.setItem("registrosls", JSON.stringify(registrosls));
-  }, [registrosls]);
-
-
   const limpiarFormulario = () => {
-      setDisciplina("");
-      setNombre("");
-      setEmail("");
-      setFecha("");
-      setHora("");
+      setDisciplina(null);
+      setNombre(null);
+      setEmail(null);
+      setFecha(null);
+      setHora(null);
       document.getElementById("form").reset();
   }
 
@@ -63,11 +59,6 @@ export function Reserva() {
 
 
     useEffect(()=> {
-      setDisciplina("");
-      setNombre("");
-      setEmail("");
-      setFecha("");
-      setHora("");
       let form = document.getElementById("form");
       function handleForm(event) { event.preventDefault(); } 
       form.addEventListener('submit', handleForm);

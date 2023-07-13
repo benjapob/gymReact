@@ -1,6 +1,24 @@
 import {useState, useEffect, useRef } from "react"
 
 export function Login() {
+    const obtenerToken = () => {
+        var datos = localStorage.getItem("token");
+        if(datos){
+            return JSON.parse(datos);
+        }else{
+            return [];
+        }
+    }
+
+    const [token, setToken] = useState(obtenerToken());
+
+    const handleLogin = () => setToken(['123']);
+
+    useEffect(() => {
+        localStorage.setItem("token", JSON.stringify(token));
+    }, [token]);
+
+
     const[usuario, setUsuario] = useState([]);
 
     useEffect(()=> {
@@ -27,6 +45,7 @@ export function Login() {
         let contraseña = usuario.find(o => o.contraseña === contra.current.value);
 
         if (correo && contraseña) {
+          handleLogin()
           window.location = '/reservarHora';
         }
         else {
